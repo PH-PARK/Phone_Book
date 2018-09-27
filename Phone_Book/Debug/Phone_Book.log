@@ -1,0 +1,5 @@
+﻿  Phone_Book_v1.1.c
+c:\users\stude\onedrive\문서\github\phone_book\phone_book\phone_book_v1.1.c(36): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(1274): note: 'scanf' 선언을 참조하십시오.
+c:\users\stude\onedrive\문서\github\phone_book\phone_book\phone_book_v1.1.c(198): warning C4013: 'fput'이(가) 정의되지 않았습니다. extern은 int형을 반환하는 것으로 간주합니다.
+c:\users\stude\onedrive\문서\github\phone_book\phone_book\phone_book_v1.1.c(204): error C2065: 'numofData': 선언되지 않은 식별자입니다.
