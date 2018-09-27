@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#define INTERACTIVE
+#define INTERACTIVE
 #define NAME_LEN 20
 #define PHONE_LEN 20
 #define LIST_NUM 100
@@ -32,8 +32,14 @@ int main()
 	{
 		ShowMenu();
 		fputs("Select a number: ", stdout);
-		scanf("%d",&inputMenu);
-		clear_inputBuffer();  // 입력버퍼 비우기
+#ifdef INTERACTIVE
+#ifdef __linux__
+		scanf("%d", &inputMenu);
+#else
+		scanf_s("%d",&inputMenu);
+#endif
+#endif
+		clear_inputBuffer(); 
 		switch (inputMenu)
 		{
 		case INPUT:
@@ -90,7 +96,7 @@ void ShowMenu()
 void clear_inputBuffer()
 {
 	//  fflush(stdin);
-	while(getchar() != '\n');     // 입력버퍼 비우기
+	while(getchar() != '\n');     // clear inputbuffer
 
 }
 
