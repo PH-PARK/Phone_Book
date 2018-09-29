@@ -388,3 +388,9 @@ ASALocalRun/
 
 
 # End of https://www.gitignore.io/api/c,visualstudio
+.vs/Phone_Book/v15/Browse.VC.db
+.vs/Phone_Book/v15/.suo
+Phone_Book/Debug/vc141.pdb
+Phone_Book/Debug/vc141.idb
+Phone_Book/Debug/Phone_Book.tlog/CL.command.1.tlog
+Phone_Book/Debug/Phone_Book.log
