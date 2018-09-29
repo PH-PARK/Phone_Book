@@ -32,7 +32,7 @@ int main()
 	{
 		ShowMenu();
 		fputs("Select a number: ", stdout);
-		scanf("%d",&inputMenu);
+		scanf_s("%d",&inputMenu);
 		clear_inputBuffer();  // 입력버퍼 비우기
 		switch (inputMenu)
 		{
