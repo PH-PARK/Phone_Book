@@ -195,13 +195,13 @@ void SearchPhoneData()
 	int i;
 	char searchName[NAME_LEN];
 
-	fput("NAME: ", stdout);
+	fputs("NAME: ", stdout);
 	if (getString(searchName, NAME_LEN) == 1)//
 	{
 		return;
 	}
 
-	for (i = 0; i < numofData; i++)
+	for (i = 0; i < numOfData; i++)
 	{
 		if (!strcmp(phoneList[i].name, searchName))
 		{
