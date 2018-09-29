@@ -6,6 +6,7 @@
 #define NAME_LEN 20
 #define PHONE_LEN 20
 #define LIST_NUM 100
+//??
 enum { QUIT = 0, INPUT, SHOWALL };
 
 typedef struct phoneData
