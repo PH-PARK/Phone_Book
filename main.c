@@ -238,6 +238,12 @@ void ReplacePhoneData()
 		return;
 	}
 
+	if (numOfData == 0)
+	{
+		puts("'%s' is not in the list\n",searchName);
+		return;
+	}
+
 	for (i = 0; i < numOfData; i++)
 	{
 		if (!strcmp(phoneList[i].name, searchName))
@@ -246,6 +252,12 @@ void ReplacePhoneData()
 			data = phoneList[i];
 			break;
 		}
+		
+		if (i + 1 == numOfData)
+		{
+			printf("'%s' is not in the list.\n", searchName);
+			return;
+		}
 	}
 	fputs("New phone number: ",stdout);
 	if (getString(data.phoneNum, NAME_LEN) == 1) {
@@ -253,7 +265,7 @@ void ReplacePhoneData()
 	}
 
 	phoneList[i] = data;
-	puts("Phone number is replaced.", stdout);
+	printf("Phone number is replaced.", searchName);
 
 	return 0;
 
@@ -261,7 +273,40 @@ void ReplacePhoneData()
 
 void DeletePhoneData()
 {
+	int i,j;
+	char searchName[NAME_LEN];
 
+	fputs("Name: ",stdout);
+	if (getString(searchName, NAME_LEN)== 1 ) 
+	{
+		return;
+	}
+	if (numOfData == 0)
+	{
+		printf("'%s' is not in the list.\n",searchName);
+		return;
+	}
+	for (i = 0; i < numOfData; i++)
+	{
+		if (!strcmp(phoneList[i].name, searchName))
+		{
+			for (j=i;j+1<numOfData;j++)
+			{
+				phoneList[j]=phoneList[j+1];
+			}
+			//phoneList[numOfData]
+			numOfData--;
+			puts("Phone number is deleted.");
+
+			break;
+		}
+
+		if (i + 1 == numOfData)
+		{
+			printf("'%s' is not in the list.\n",searchName);
+			return;
+		}
+	}
 }
 void ShowPhoneInfo(phoneData phone)
 {
