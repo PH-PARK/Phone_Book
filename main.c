@@ -36,7 +36,7 @@ int main()
 	{
 		ShowMenu();
 		fputs("Select a number: ", stdout);
-		scanf_s("%d",&inputMenu);
+		scanf("%d",&inputMenu);
 		clear_inputBuffer();  // 입력버퍼 비우기
 		switch (inputMenu)
 		{
@@ -240,7 +240,7 @@ void ReplacePhoneData()
 
 	if (numOfData == 0)
 	{
-		puts("'%s' is not in the list\n",searchName);
+		printf("'%s' is not in the list.\n",searchName);
 		return;
 	}
 
@@ -265,7 +265,7 @@ void ReplacePhoneData()
 	}
 
 	phoneList[i] = data;
-	printf("Phone number is replaced.", searchName);
+	puts("Phone number is replaced.");
 
 	return 0;
 
