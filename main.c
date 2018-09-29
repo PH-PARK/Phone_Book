@@ -6,7 +6,7 @@
 #define NAME_LEN 20
 #define PHONE_LEN 20
 #define LIST_NUM 100
-enum { QUIT = 0, INPUT, SHOWALL,SEARCH };
+enum { QUIT = 0, INPUT, SHOWALL,SEARCH, REPLACE, DELETE };
 
 typedef struct phoneData
 {
@@ -25,6 +25,9 @@ int getString(char *buf, int maxLen);
 void ShowAllData();
 void ShowPhoneInfo(phoneData phone);
 void SearchPhoneData();
+void ReplacePhoneData();
+void DeletePhoneData();
+
 
 int main()
 {
@@ -47,6 +50,14 @@ int main()
 
 		case SEARCH:
 			SearchPhoneData();
+			break;
+
+		case REPLACE:
+			ReplacePhoneData();
+			break;
+			
+		case DELETE:
+			DeletePhoneData();
 			break;
 		}
 
@@ -86,6 +97,8 @@ void ShowMenu()
 	puts(" 1. New phone number");
 	puts(" 2. Display all");
 	puts(" 3. Search");
+	puts(" 4. Replace");
+	puts(" 5. Delete");
 	puts("----------------------");
 	fputs("Menu>> ", stdout);
 }
@@ -213,6 +226,15 @@ void SearchPhoneData()
 	printf("'%s'is not in the list.\n", searchName);
 }
 
+void ReplacePhoneData()
+{
+
+}
+
+void DeletePhoneData()
+{
+
+}
 void ShowPhoneInfo(phoneData phone)
 {
 	puts("---------------------------");
