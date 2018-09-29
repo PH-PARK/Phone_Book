@@ -36,7 +36,7 @@ int main()
 	{
 		ShowMenu();
 		fputs("Select a number: ", stdout);
-		scanf("%d",&inputMenu);
+		scanf_s("%d",&inputMenu);
 		clear_inputBuffer();  // 입력버퍼 비우기
 		switch (inputMenu)
 		{
@@ -108,7 +108,7 @@ void ShowMenu()
 void clear_inputBuffer()
 {
 	//  fflush(stdin);
-	while(getchar() != '\n');     // 입력버퍼 비우기
+	while(getchar() != '\n');     //clear buffer
 
 }
 
@@ -116,7 +116,7 @@ void clear_inputBuffer()
 
 void InputPhoneData()
 {
-	phoneData data;
+	phoneData data; 
 
 	if (numOfData >= LIST_NUM)
 	{
@@ -125,7 +125,7 @@ void InputPhoneData()
 		return;
 	}
 	fputs("Name: ", stdout);
-	if(getString(data.name,NAME_LEN) == 1)
+	if(getString(data.name,NAME_LEN) == 1) //write string to data.name and check error
 	{
 
 #ifdef INTERACTIVE
@@ -141,7 +141,7 @@ void InputPhoneData()
 	fputs("Phone number: ", stdout);
 
 
-	if(getString(data.phoneNum,PHONE_LEN) == 1)
+	if(getString(data.phoneNum,PHONE_LEN) == 1)//write string to data.phoneNum and check error
 	{
 #ifdef INTERACTIVE
 		getchar();
@@ -151,8 +151,8 @@ void InputPhoneData()
 		return;
 
 	}
-
-	phoneList[numOfData] = data;
+	
+	phoneList[numOfData] = data; //add data to phonList from temporary data. 
 	numOfData++;
 	puts("New phone number is added.");
 
@@ -209,7 +209,7 @@ void SearchPhoneData()
 	char searchName[NAME_LEN];
 
 	fputs("NAME: ", stdout);
-	if (getString(searchName, NAME_LEN) == 1)//
+	if (getString(searchName, NAME_LEN) == 1)//getString return 1 when it failed.
 	{
 		return;
 	}
@@ -228,6 +228,34 @@ void SearchPhoneData()
 
 void ReplacePhoneData()
 {
+	int i;
+	char searchName[NAME_LEN];
+	phoneData data;
+
+	fputs("NAME: ", stdout);
+	if (getString(searchName, NAME_LEN) == 1)//getString return 1 when it failed.
+	{
+		return;
+	}
+
+	for (i = 0; i < numOfData; i++)
+	{
+		if (!strcmp(phoneList[i].name, searchName))
+		{
+			ShowPhoneInfo(phoneList[i]);
+			data = phoneList[i];
+			break;
+		}
+	}
+	fputs("New phone number: ",stdout);
+	if (getString(data.phoneNum, NAME_LEN) == 1) {
+		return;
+	}
+
+	phoneList[i] = data;
+	puts("Phone number is replaced.", stdout);
+
+	return 0;
 
 }
 
