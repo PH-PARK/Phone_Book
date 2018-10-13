@@ -3,34 +3,39 @@
 #include <string.h>
 
 //#define INTERACTIVE
+#define __DEBUG__
 #define NAME_LEN 20
 #define PHONE_LEN 20
 #define LIST_NUM 100
+
 enum { QUIT = 0, INPUT, SHOWALL,SEARCH, REPLACE, DELETE };
 
 typedef struct phoneData
 {
 	char name[NAME_LEN];
 	char phoneNum[PHONE_LEN];
+	struct phoneData* NextAddress;
+
 } phoneData;
 
-int numOfData = 0;
+//int numOfData = 0;
 
-phoneData phoneList[LIST_NUM];
+//phoneData phoneList[LIST_NUM];
 
 void ShowMenu();
 void clear_inputBuffer();
 void InputPhoneData();
 int getString(char *buf, int maxLen);
 void ShowAllData();
-void ShowPhoneInfo(phoneData phone);
+void ShowPhoneInfo(phoneData* phone);
 void SearchPhoneData();
 void ReplacePhoneData();
 void DeletePhoneData();
-
+phoneData* FirstAddress = NULL;
 
 int main()
 {
+	
 	int inputMenu = 0;
 	while(1)
 	{
@@ -55,7 +60,7 @@ int main()
 		case REPLACE:
 			ReplacePhoneData();
 			break;
-			
+
 		case DELETE:
 			DeletePhoneData();
 			break;
@@ -108,7 +113,7 @@ void ShowMenu()
 void clear_inputBuffer()
 {
 	//  fflush(stdin);
-	while(getchar() != '\n');     //clear buffer
+	while(getchar() != '\n');     // 입력버퍼 비우기
 
 }
 
@@ -116,45 +121,56 @@ void clear_inputBuffer()
 
 void InputPhoneData()
 {
-	phoneData data; 
-
-	if (numOfData >= LIST_NUM)
-	{
-		puts("Out of memory");
-
-		return;
-	}
-	fputs("Name: ", stdout);
-	if(getString(data.name,NAME_LEN) == 1) //write string to data.name and check error
-	{
-
-#ifdef INTERACTIVE
-
-		getchar();
-
+	phoneData data;
+#ifdef __DEBUG__
+	phoneData* temp;
 #endif
 
-		return;
+	fputs("Name: ", stdout);
 
+	if(getString(data.name,NAME_LEN) == 1)
+	{
+#ifdef INTERACTIVE
+		getchar();
+#endif
+		return;
 	}
 
 	fputs("Phone number: ", stdout);
 
-
-	if(getString(data.phoneNum,PHONE_LEN) == 1)//write string to data.phoneNum and check error
+	if(getString(data.phoneNum,PHONE_LEN) == 1)
 	{
 #ifdef INTERACTIVE
 		getchar();
-
 #endif
-
 		return;
-
 	}
-	
-	phoneList[numOfData] = data; //add data to phonList from temporary data. 
-	numOfData++;
+
+	if (FirstAddress == NULL) 
+	{
+		FirstAddress = &data;
+		data.NextAddress = NULL;
+#ifdef __DEBUG__
+	//puts("In the if(FirstAddress == NULL)");
+	temp=FirstAddress;
+	printf("FirstAddress : %d, &data: %d, temp: %d \n", FirstAddress, &data, temp);
+	printf("data.name : %s\n data.phonenum : %s\n", data.name, data.phoneNum);
+	printf("temp->name : %s\n temp->phoneNum : %s\n", temp->name, temp->phoneNum);
+#endif
+	}
+	else
+	{
+#ifdef __DEBUG__
+		puts("else");
+#endif
+	}
+
 	puts("New phone number is added.");
+
+#ifdef __DEBUG__
+//	printf("NAME : %s\n", data.name);
+//	printf("PhoneNum : %s\n", data.phoneNum);
+#endif
 
 #ifdef INTERACTIVE
 
@@ -170,6 +186,9 @@ int getString(char *buf, int maxLen)
 {
 	int i;
 	char ch;
+#ifdef __DEBUG__
+	printf("We are here.");
+#endif 
 
 	for	(i = 0;	i <	maxLen; i++)
 	{
@@ -188,14 +207,21 @@ int getString(char *buf, int maxLen)
 }
 
 
-
 void ShowAllData()
 {
-	int i;
-	for(i = 0;i <numOfData; i++)
+	phoneData* temp = FirstAddress;
+
+#ifdef __DEBUG__
+	printf("temp : %d\n",temp);
+	printf("| Name: %s\n", temp->name);
+	printf("| Phone number: %s\n", temp->phoneNum);
+#endif
+	if (temp) //  (temp != NULL)
 	{
-		ShowPhoneInfo(phoneList[i]);
+		ShowPhoneInfo(temp);
+		temp = temp->NextAddress;
 	}
+
 	puts("End of list");
 
 #ifdef INTERACTIVE
@@ -207,20 +233,32 @@ void SearchPhoneData()
 {
 	int i;
 	char searchName[NAME_LEN];
+	phoneData* temp = FirstAddress;
 
 	fputs("NAME: ", stdout);
-	if (getString(searchName, NAME_LEN) == 1)//getString return 1 when it failed.
+	if (getString(searchName, NAME_LEN) == 1)//
 	{
 		return;
 	}
 
-	for (i = 0; i < numOfData; i++)
+	/*for (i = 0; i < numOfData; i++)
 	{
 		if (!strcmp(phoneList[i].name, searchName))
 		{
 			ShowPhoneInfo(phoneList[i]);
 			return;
 		}
+	}*/
+
+	while (temp != NULL)
+	{
+		if (!strcmp(temp->name, searchName)) // strcmp returns 0 when two strings are same.
+		{									 // so this line means if it is same
+			ShowPhoneInfo(temp);
+			return;
+		}
+
+		temp = temp->NextAddress;
 	}
 
 	printf("'%s'is not in the list.\n", searchName);
@@ -238,9 +276,9 @@ void ReplacePhoneData()
 		return;
 	}
 
-	if (numOfData == 0)
+	/*if (numOfData == 0)
 	{
-		printf("'%s' is not in the list.\n",searchName);
+		printf("'%s' is not in the list.\n", searchName);
 		return;
 	}
 
@@ -252,47 +290,49 @@ void ReplacePhoneData()
 			data = phoneList[i];
 			break;
 		}
-		
+
 		if (i + 1 == numOfData)
 		{
 			printf("'%s' is not in the list.\n", searchName);
 			return;
 		}
-	}
-	fputs("New phone number: ",stdout);
+	}*/
+	fputs("New phone number: ", stdout);
 	if (getString(data.phoneNum, NAME_LEN) == 1) {
 		return;
 	}
 
-	phoneList[i] = data;
+	//phoneList[i] = data;
 	puts("Phone number is replaced.");
 
 	return 0;
 
 }
 
+
+
 void DeletePhoneData()
 {
-	int i,j;
+	int i, j;
 	char searchName[NAME_LEN];
 
-	fputs("Name: ",stdout);
-	if (getString(searchName, NAME_LEN)== 1 ) 
+	fputs("Name: ", stdout);
+	if (getString(searchName, NAME_LEN) == 1)
 	{
 		return;
 	}
-	if (numOfData == 0)
+	/*if (numOfData == 0)
 	{
-		printf("'%s' is not in the list.\n",searchName);
+		printf("'%s' is not in the list.\n", searchName);
 		return;
 	}
 	for (i = 0; i < numOfData; i++)
 	{
 		if (!strcmp(phoneList[i].name, searchName))
 		{
-			for (j=i;j+1<numOfData;j++)
+			for (j = i; j + 1 < numOfData; j++)
 			{
-				phoneList[j]=phoneList[j+1];
+				phoneList[j] = phoneList[j + 1];
 			}
 			//phoneList[numOfData]
 			numOfData--;
@@ -303,16 +343,18 @@ void DeletePhoneData()
 
 		if (i + 1 == numOfData)
 		{
-			printf("'%s' is not in the list.\n",searchName);
+			printf("'%s' is not in the list.\n", searchName);
 			return;
 		}
-	}
+		
+	}*/
 }
-void ShowPhoneInfo(phoneData phone)
+
+void ShowPhoneInfo(phoneData* phone)
 {
 	puts("---------------------------");
-	printf("| Name: %s\n", phone.name);
-	printf("| Phone number: %s\n", phone.phoneNum);
+	printf("| Name: %s\n", phone->name);
+	printf("| Phone number: %s\n", phone->phoneNum);
 	puts("---------------------------");
 
 }
