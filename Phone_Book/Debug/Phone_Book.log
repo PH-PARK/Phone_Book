@@ -1,6 +1,6 @@
 ﻿  main.c
 c:\users\stude\onedrive\문서\github\phone_book\main.c(44): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(1274): note: 'scanf' 선언을 참조하십시오.
-c:\users\stude\onedrive\문서\github\phone_book\main.c(370): warning C4098: 'ReplacePhoneData': 'void' 함수에서 값을 반환하고 있습니다.
-c:\users\stude\onedrive\문서\github\phone_book\main.c(381): warning C4101: 'pLoc' :참조되지 않은 지역 변수입니다.
+c:\users\stude\onedrive\문서\github\phone_book\main.c(252): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'phoneData *'입니다.
+c:\users\stude\onedrive\문서\github\phone_book\main.c(446): warning C4101: 'pLoc' :참조되지 않은 지역 변수입니다.
   Phone_Book.vcxproj -> C:\Users\stude\OneDrive\문서\GitHub\Phone_Book\Debug\Phone_Book.exe

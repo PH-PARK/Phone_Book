@@ -3,7 +3,7 @@
 #include <string.h>
 
 //#define INTERACTIVE
-#define __DEBUG__
+//#define __DEBUG__
 #define NAME_LEN 20
 #define PHONE_LEN 20
 #define LIST_NUM 100
@@ -173,11 +173,12 @@ void InputPhoneData()
 #ifdef __DEBUG__
 //		printf("FistAddress : %d, pLoc : %d\n",FirstAddress, pLoc);
 		//printf("name : %s, phonenum: %s, nextAddress : %d\n", pLoc->name, pLoc->phoneNum, pLoc->NextAddress);
+		printf("r_v : %d, i : %d\n", strcmp(pLoc->name,data->name), i);
 #endif
-		while (strcmp(pLoc->name, data->name) > 0)
+		while (strcmp(pLoc->name, data->name) < 0) // new string should be go to rear.
 		{
 #ifdef __DEBUG__
-			printf("i : %d\n", i);
+			
 			i++;
 			if (i == 100)
 			{
@@ -189,28 +190,35 @@ void InputPhoneData()
 			if (pLoc->NextAddress) //if pLoc is not Last
 			{	
 				pPre = pLoc;
-				pLoc = pLoc->NextAddress;
+				pLoc = pLoc->NextAddress; //keep Searching
 #ifdef __DEBUG__
 				puts("here 1");
-				ShowAllData();
+				//ShowAllData();
 #endif
 			}
-			else//if pLoc is Last
+			else//if pLoc is Last : pLoc->NextAddress is NULL; Can't Keep Searcing.
 			{
 #ifdef __DEBUG__
 				puts("here 2");
 #endif
-				if (pPre)
+				if (pPre)//pPre is not NULL : If there are only two items including pLoc
 				{
 #ifdef __DEBUG__
 					puts("here 3");
 #endif
+		
 					pPre->NextAddress = pLoc;
+					
 				}
-				pLoc->NextAddress = data;
-				data->NextAddress = NULL;
-				puts("New phone number is added.");
-				return;
+
+					pLoc->NextAddress = data;
+					data->NextAddress = NULL;
+					puts("New phone number is added.");
+#ifdef __DEBUG__
+					puts("here 5");
+#endif
+					return;
+				
 			}
 
 #ifdef __DEBUG__
@@ -220,17 +228,74 @@ void InputPhoneData()
 
 		}
 
-
+		//when it found something.
 
 		if (pPre)
-		{
+		{//pPre != NULL : Data is not in the first.
+#ifdef __DEBUG__
+			puts("here !");
+#endif
 			pPre->NextAddress = data;
-			data->NextAddress = pLoc;
+		/*	if(!data->NextAddress)
+			{
+#ifdef __DEBUG__
+				puts("here #");
+				printf("data->NextAddress : %d", data->NextAddress);
+#endif
+				data->NextAddress = pLoc;
+				pLoc->NextAddress = NULL;
+			}
+			else*/
+			//{
+#ifdef __DEBUG__
+				puts("here $");
+				printf("data->NextAddress : %d", data->NextAddress);
+#endif
+				data->NextAddress = pLoc;
+			//}
 		}
-		else
+		else//pPre == NULL : Data is in the first.
 		{
+#ifdef __DEBUG__
+			puts("here @");
+#endif
+
 			FirstAddress = data;
-			data->NextAddress = pLoc;
+
+			if (pLoc)
+			{
+				data->NextAddress = pLoc;//->NextAddress;
+#ifdef __DEBUG__
+				puts("here#");
+#endif
+			}
+			else
+			{
+#ifdef __DEBUG__
+				puts("here%");
+#endif
+				data->NextAddress = NULL;
+			}
+			data = pLoc;
+			/*
+			if (pLoc->NextAddress) //this is not last
+			{
+				pLoc->NextAddress = data;
+				if (data->NextAddress)
+				{
+					data->NextAddress = data->NextAddress;
+				}
+				else
+				{
+					data->NextAddress = NULL;
+				}
+				
+			}*/
+			/*else//
+			{
+				pLoc->NextAddress = NULL;
+			}*/
+			
 		}
 
 	}//not First Data
@@ -331,7 +396,7 @@ void ReplacePhoneData()
 	phoneData* temp = FirstAddress;
 
 
-	fputs("NAME: ", stdout);
+	fputs("Name: ", stdout);
 	if (getString(searchName, NAME_LEN) == 1)//getString return 1 when it failed.
 	{
 		return;
@@ -367,7 +432,7 @@ void ReplacePhoneData()
 	//temp = data;
 	puts("Phone number is replaced.");
 
-	return 0;
+	return;
 
 }
 
