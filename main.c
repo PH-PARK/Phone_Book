@@ -35,6 +35,7 @@ void ShowPhoneInfo(phoneData* phone);
 void SearchPhoneData();
 void ReplacePhoneData();
 void DeletePhoneData();
+phoneData* MakeBTNode(void);
 
 phoneData* gRoot = NULL;
 
@@ -126,9 +127,8 @@ void clear_inputBuffer()
 
 void InputPhoneData()
 {
-	phoneData* data = (phoneData*)malloc(sizeof(phoneData));
-	phoneData* pLoc = NULL;
-	phoneData* pPre = NULL;
+	phoneData* data = MakeBTNode();
+	phoneData* temp;
 
 #ifdef __DEBUG__
 	int i = 0;
@@ -158,8 +158,17 @@ void InputPhoneData()
 	if (!gRoot)
 	{
 		gRoot = data;
+
+		puts("New phone number is added.");
+		return;
 	}
-	puts("New phone number is added.");
+
+	temp = gRoot;
+	while()
+	if (strcmp(temp->phoneNum, data->phoneNum) > 0 ) // root's phonnum is bigger, data should go right.
+	{
+		if()
+	}
 
 
 
@@ -282,7 +291,7 @@ void ReplacePhoneData()
 
 	return;
 
-}
+}//not yet
 
 
 
@@ -331,7 +340,7 @@ void DeletePhoneData()
 		return;
 	}
 
-}
+}//should change this
 
 void ShowPhoneInfo(phoneData* phone)
 {
@@ -342,12 +351,10 @@ void ShowPhoneInfo(phoneData* phone)
 
 }
 
-phoneData* MakeBTNode(char* name, int phoneNumber)
+phoneData* MakeBTNode(void)
 {
-	phoneData* temp;
+	phoneData* temp = (phoneData*)malloc(sizeof(phoneData));
 
-	temp->name = name;
-	temp->phoneNum = phoneNumber;
 	temp->leftNode = NULL;
 	temp->rightNode = NULL;
 
