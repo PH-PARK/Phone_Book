@@ -7,10 +7,12 @@
 #include <string.h>
 
 //#define INTERACTIVE
-//#define __DEBUG__
+#define __DEBUG__
 #define NAME_LEN 20
 #define PHONE_LEN 20
 #define LIST_NUM 100
+#define MAX_QUEUE_SIZE 1000
+//#define TEST
 
 enum { QUIT = 0, INPUT, SHOWALL,SEARCH, REPLACE, DELETE };
 
@@ -36,8 +38,14 @@ void SearchPhoneData();
 void ReplacePhoneData();
 void DeletePhoneData();
 phoneData* MakeBTNode(void);
+phoneData* dequeue(void);
+void enqueue(phoneData*);
+void LevelOrder(phoneData*);
 
 phoneData* gRoot = NULL;
+int front = 0;
+int rear = 0;
+phoneData* queue[MAX_QUEUE_SIZE];
 
 int main()
 {
@@ -58,7 +66,7 @@ int main()
 		case SHOWALL:
 			ShowAllData();
 			break;
-
+#ifdef TEST
 		case SEARCH:
 			SearchPhoneData();
 			break;
@@ -70,6 +78,7 @@ int main()
 		case DELETE:
 			DeletePhoneData();
 			break;
+#endif
 		}
 
 		if(inputMenu == QUIT)
@@ -130,10 +139,7 @@ void InputPhoneData()
 	phoneData* data = MakeBTNode();
 	phoneData* temp;
 
-#ifdef __DEBUG__
-	int i = 0;
-	//phoneData* temp;
-#endif
+
 
 	fputs("Name: ", stdout);
 
@@ -158,19 +164,71 @@ void InputPhoneData()
 	if (!gRoot)
 	{
 		gRoot = data;
-
+#ifdef __DEBUG__
+		puts("DEBUG: First Data Added.");
+#endif
 		puts("New phone number is added.");
 		return;
 	}
-
+	
 	temp = gRoot;
-	while()
-	if (strcmp(temp->phoneNum, data->phoneNum) > 0 ) // root's phonnum is bigger, data should go right.
+#ifdef __DEBUG__
+	puts("DEBUG: Not a First Data.");
+#endif
+	if (strcmp(temp->phoneNum, data->phoneNum) > 0) // root's phone number is bigger, data should go left.
 	{
-		if()
+#ifdef __DEBUG__
+		puts("DEBUG: Data is smaller.");
+#endif
+		if (temp->leftNode)
+		{
+#ifdef __DEBUG__
+			printf("DEBUG: '%s''s left nodes is not empty.",temp->name);
+#endif
+			temp = temp->leftNode;
+#ifdef __DEBUG__
+			printf("DEBUG: now searching '%s'\n",temp->leftNode->name);
+#endif
+		}
+		else
+		{
+#ifdef __DEBUG__
+			printf("DEBUG: '%s''s left node is empty\n",temp->name);
+#endif
+			temp->leftNode = data;
+#ifdef __DEBUG__
+			printf("DEBUG: now leftnode is '%s'\n",temp->leftNode->name);
+#endif
+			return;
+		}
 	}
-
-
+	else
+	{
+#ifdef __DEBUG__
+		puts("DEBUG: Data is bigger.");
+#endif
+		if (temp->rightNode)
+		{
+#ifdef __DEBUG__
+			printf("DEBUG: '%s''s right nodes is not empty.\n", temp->name);
+#endif
+			temp = temp->rightNode;
+#ifdef __DEBUG__
+			printf("DEBUG: now searching '%s'\n", temp->rightNode->name);
+#endif
+		}
+		else
+		{
+#ifdef __DEBUG__
+			printf("DEBUG: '%s''s right node is empty\n", temp->name);
+#endif
+			temp->rightNode = data;
+#ifdef __DEBUG__
+			printf("DEBUG: now rightnode is '%s'\n", temp->rightNode->name);
+#endif
+			return;
+		}
+	}
 
 #ifdef INTERACTIVE
 
@@ -179,7 +237,6 @@ void InputPhoneData()
 #endif
 
 }
-
 
 
 int getString(char *buf, int maxLen)
@@ -209,11 +266,10 @@ int getString(char *buf, int maxLen)
 
 void ShowAllData()
 {
-	phoneData* temp = FirstAddres;
-
+	LevelOrder(gRoot);
 
 	puts("End of list");
-
+	
 	return;
 
 #ifdef INTERACTIVE
@@ -221,6 +277,7 @@ void ShowAllData()
 #endif
 }
 
+#ifdef TEST
 void SearchPhoneData()
 {
 	char searchName[NAME_LEN];
@@ -245,6 +302,7 @@ void SearchPhoneData()
 
 	printf("'%s'is not in the list.\n", searchName);
 }
+
 
 void ReplacePhoneData()
 {
@@ -341,7 +399,7 @@ void DeletePhoneData()
 	}
 
 }//should change this
-
+#endif
 void ShowPhoneInfo(phoneData* phone)
 {
 	puts("---------------------------");
@@ -359,4 +417,87 @@ phoneData* MakeBTNode(void)
 	temp->rightNode = NULL;
 
 	return temp;
+}
+
+void LevelOrder(phoneData* root)
+{
+	front = 0;
+	rear = 0;
+	if (!root)
+	{
+#ifdef __DEBUG__
+		puts("DEBUG: root is 'NULL'" );
+#endif
+		return;
+	}
+
+	enqueue(root);
+#ifdef __DEBUG__
+	printf("DEBUG: enqueue a root : '%s'\n",root->name);
+#endif
+
+	while(1)
+	{
+		root = dequeue();
+#ifdef __DEBUG__
+		printf("DEBUG: dequeue root '%s'\n",root->name);
+#endif
+		if (root)
+		{
+#ifdef __DEBUG__
+			puts("DEBUG: root is not 'NULL'");
+			puts("DEBUG: showing root's name");
+#endif
+			ShowPhoneInfo(root);
+			if (root->leftNode)
+			{
+				enqueue(root->leftNode);
+#ifdef __DEBUG__
+				printf("DEBUG: enqueue root->leftNode : '%s'\n",root->leftNode);
+#endif
+
+			}
+			else
+			{
+#ifdef __DEBUG__
+				puts("DEBUG: root->leftnode is NULL");
+#endif
+			}
+			if (root->rightNode)
+			{
+				enqueue(root->rightNode);
+#ifdef __DEBUG__
+				printf("DEBUG: enqueue root->rightNode : '%s'\n",root->rightNode);
+#endif
+			}
+			else
+			{
+#ifdef __DEBUG__
+				puts("DEBUG: root->rightnode is NULL");
+#endif
+			}
+		}
+		else
+		{
+#ifdef __DEBUG__
+			puts("DEBUG: root is NULL");
+			puts("DEBUG: break");
+#endif
+			break;
+		}
+	}
+
+}
+
+void enqueue(phoneData* item)
+{
+	rear = (rear + 1) % MAX_QUEUE_SIZE;
+	queue[rear] = item;
+	return;
+}
+
+phoneData* dequeue(void)
+{
+	front = (front + 1) % MAX_QUEUE_SIZE;
+	return queue[front];
 }
