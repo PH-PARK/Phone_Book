@@ -175,58 +175,62 @@ void InputPhoneData()
 #ifdef __DEBUG__
 	puts("DEBUG: Not a First Data.");
 #endif
-	if (strcmp(temp->phoneNum, data->phoneNum) > 0) // root's phone number is bigger, data should go left.
+	while (temp)
 	{
-#ifdef __DEBUG__
-		puts("DEBUG: Data is smaller.");
-#endif
-		if (temp->leftNode)
+
+		if (strcmp(temp->phoneNum, data->phoneNum) > 0) // root's phone number is bigger, data should go left.
 		{
 #ifdef __DEBUG__
-			printf("DEBUG: '%s''s left nodes is not empty.",temp->name);
+			puts("DEBUG: Data is smaller.");
 #endif
-			temp = temp->leftNode;
+			if (temp->leftNode)
+			{
 #ifdef __DEBUG__
-			printf("DEBUG: now searching '%s'\n",temp->leftNode->name);
+				printf("DEBUG: '%s''s left nodes is not empty.", temp->name);
 #endif
+				temp = temp->leftNode;
+#ifdef __DEBUG__
+				printf("DEBUG: now searching '%s'\n", temp->name);
+#endif
+			}
+			else
+			{
+#ifdef __DEBUG__
+				printf("DEBUG: '%s''s left node is empty\n", temp->name);
+#endif
+				temp->leftNode = data;
+#ifdef __DEBUG__
+				printf("DEBUG: now leftnode is '%s'\n", temp->leftNode->name);
+#endif
+				return;
+			}
 		}
 		else
 		{
 #ifdef __DEBUG__
-			printf("DEBUG: '%s''s left node is empty\n",temp->name);
+			puts("DEBUG: Data is bigger.");
 #endif
-			temp->leftNode = data;
+			if (temp->rightNode)
+			{
 #ifdef __DEBUG__
-			printf("DEBUG: now leftnode is '%s'\n",temp->leftNode->name);
+				printf("DEBUG: '%s''s right nodes is not empty.\n", temp->name);
 #endif
-			return;
-		}
-	}
-	else
-	{
+				temp = temp->rightNode;
 #ifdef __DEBUG__
-		puts("DEBUG: Data is bigger.");
+				printf("DEBUG: now searching '%s'\n", temp->name);
 #endif
-		if (temp->rightNode)
-		{
+			}
+			else
+			{
 #ifdef __DEBUG__
-			printf("DEBUG: '%s''s right nodes is not empty.\n", temp->name);
+				printf("DEBUG: '%s''s right node is empty\n", temp->name);
 #endif
-			temp = temp->rightNode;
+				temp->rightNode = data;
 #ifdef __DEBUG__
-			printf("DEBUG: now searching '%s'\n", temp->rightNode->name);
+				printf("DEBUG: now rightnode is '%s'\n", temp->rightNode->name);
 #endif
-		}
-		else
-		{
-#ifdef __DEBUG__
-			printf("DEBUG: '%s''s right node is empty\n", temp->name);
-#endif
-			temp->rightNode = data;
-#ifdef __DEBUG__
-			printf("DEBUG: now rightnode is '%s'\n", temp->rightNode->name);
-#endif
-			return;
+				return;
+			}
 		}
 	}
 
