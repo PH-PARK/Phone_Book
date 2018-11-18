@@ -66,11 +66,11 @@ int main()
 		case SHOWALL:
 			ShowAllData();
 			break;
-#ifdef TEST
+
 		case SEARCH:
 			SearchPhoneData();
 			break;
-
+#ifdef TEST
 		case REPLACE:
 			ReplacePhoneData();
 			break;
@@ -281,33 +281,55 @@ void ShowAllData()
 #endif
 }
 
-#ifdef TEST
+
 void SearchPhoneData()
 {
 	char searchName[NAME_LEN];
-	phoneData* temp = FirstAddress;
+	phoneData* temp;
+	front = 0;
+	rear = 0;
 
 	fputs("NAME: ", stdout);
+
 	if (getString(searchName, NAME_LEN) == 1)//
 	{
 		return;
 	}
 
-	while(temp)// (temp != NULL)
-	{
-		if (!strcmp(temp->name, searchName)) // strcmp returns 0 when two strings are same.
-		{									 // so this line means if it is same
-			ShowPhoneInfo(temp);
-			return;
-		}
+	enqueue(gRoot);
 
-		temp = temp->NextAddress;
+
+	while(1)// (temp != NULL)
+	{
+
+		temp = dequeue();
+		if (temp)
+		{
+			if (!strcmp(temp->name, searchName)) // strcmp returns 0 when two strings are same.
+			{									 // so this line means if(strcmp(temp->name, searchName) == 0)
+				ShowPhoneInfo(temp);
+				return;
+			}
+
+			if (temp->leftNode)
+			{
+				enqueue(temp->leftNode);
+			}
+			if (temp->rightNode)
+			{
+				enqueue(temp->rightNode);
+			}
+		}
+		else
+		{
+			break;
+		}
 	}
 
 	printf("'%s'is not in the list.\n", searchName);
 }
 
-
+#ifdef TEST
 void ReplacePhoneData()
 {
 	char searchName[NAME_LEN];
