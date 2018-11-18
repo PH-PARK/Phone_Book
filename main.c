@@ -70,11 +70,11 @@ int main()
 		case SEARCH:
 			SearchPhoneData();
 			break;
-#ifdef TEST
+
 		case REPLACE:
 			ReplacePhoneData();
 			break;
-
+#ifdef TEST
 		case DELETE:
 			DeletePhoneData();
 			break;
@@ -329,13 +329,13 @@ void SearchPhoneData()
 	printf("'%s'is not in the list.\n", searchName);
 }
 
-#ifdef TEST
+
 void ReplacePhoneData()
 {
 	char searchName[NAME_LEN];
-	phoneData* data = NULL;
-	phoneData* temp = FirstAddress;
-
+	phoneData* temp;
+	front = 0;
+	rear = 0;
 
 	fputs("Name: ", stdout);
 	if (getString(searchName, NAME_LEN) == 1)//getString return 1 when it failed.
@@ -343,42 +343,51 @@ void ReplacePhoneData()
 		return;
 	}
 
-	if(!FirstAddress)
+	enqueue(gRoot);
+
+	while (1)
 	{
-		printf("'%s' is not in the list.\n", searchName);
-		return;
-	}
-	
-	while (temp)
-	{
-		if (!strcmp(temp->name, searchName))
+		temp = dequeue();
+
+		if (temp)
 		{
-			ShowPhoneInfo(temp);
-			break;
+			if (!strcmp(temp->name, searchName))
+			{
+				ShowPhoneInfo(temp);
+				break;
+			}
+			
+			if (temp->leftNode)
+			{
+				enqueue(temp->leftNode);
+			}
+
+			if (temp->rightNode)
+			{
+				enqueue(temp->rightNode);
+			}
 		}
-		temp = temp->NextAddress;
+		else
+		{
+			printf("'%s' is not in the list.\n", searchName);
+			return;
+		}
+
 	}
 
-	if (!temp)
-	{
-		printf("'%s' is not in the list.\n", searchName);
-		return;
-	}
-	
 	fputs("New phone number: ", stdout);
 	if (getString(temp->phoneNum, NAME_LEN) == 1) {
 		return;
 	}
 
-	//temp = data;
 	puts("Phone number is replaced.");
 
 	return;
 
-}//not yet
+}
 
 
-
+#ifdef TEST
 void DeletePhoneData()
 {
 
