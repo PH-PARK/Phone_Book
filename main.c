@@ -7,7 +7,7 @@
 #include <string.h>
 
 //#define INTERACTIVE
-#define __DEBUG__
+//#define __DEBUG__
 #define NAME_LEN 20
 #define PHONE_LEN 20
 #define LIST_NUM 100
@@ -41,6 +41,7 @@ phoneData* MakeBTNode(void);
 phoneData* dequeue(void);
 void enqueue(phoneData*);
 void LevelOrder(phoneData*);
+void ClearQueue(void);
 
 phoneData* gRoot = NULL;
 int front = 0;
@@ -74,11 +75,11 @@ int main()
 		case REPLACE:
 			ReplacePhoneData();
 			break;
-#ifdef TEST
+
 		case DELETE:
 			DeletePhoneData();
 			break;
-#endif
+
 		}
 
 		if(inputMenu == QUIT)
@@ -178,7 +179,7 @@ void InputPhoneData()
 	while (temp)
 	{
 
-		if (strcmp(temp->phoneNum, data->phoneNum) > 0) // root's phone number is bigger, data should go left.
+		if(strcmp(temp->name,data->name)>0)//if (strcmp(temp->phoneNum, data->phoneNum) > 0) // root's phone number is bigger, data should go left.
 		{
 #ifdef __DEBUG__
 			puts("DEBUG: Data is smaller.");
@@ -202,6 +203,7 @@ void InputPhoneData()
 #ifdef __DEBUG__
 				printf("DEBUG: now leftnode is '%s'\n", temp->leftNode->name);
 #endif
+				puts("New phone number is added.");
 				return;
 			}
 		}
@@ -229,6 +231,7 @@ void InputPhoneData()
 #ifdef __DEBUG__
 				printf("DEBUG: now rightnode is '%s'\n", temp->rightNode->name);
 #endif
+				puts("New phone number is added.");
 				return;
 			}
 		}
@@ -270,6 +273,7 @@ int getString(char *buf, int maxLen)
 
 void ShowAllData()
 {
+	ClearQueue();
 	LevelOrder(gRoot);
 
 	puts("End of list");
@@ -387,54 +391,145 @@ void ReplacePhoneData()
 }
 
 
-#ifdef TEST
+
 void DeletePhoneData()
 {
 
 	char searchName[NAME_LEN];
-	phoneData* temp = FirstAddress;
-	phoneData* pLoc;
-	phoneData* pPre = NULL;
+	phoneData *pPre, *pLoc;
+	phoneData *pPre2, *pLoc2;
+	phoneData *child;
+
+	pLoc = gRoot;
+	pPre = NULL;
 
 	fputs("Name: ", stdout);
+
 	if (getString(searchName, NAME_LEN) == 1)
 	{
 		return;
 	}
-	if (!FirstAddress)
+#ifdef __DEBUG__
+		printf("DEBUG: searching from '%s'", pLoc);
+#endif
+	while (pLoc != NULL)
+	{
+		if (!strcmp(searchName, pLoc->name))
+		{
+			break;
+		}
+		pPre = pLoc;
+		pLoc = (strcmp(searchName,pLoc->name) < 0) ? pLoc->leftNode : pLoc->rightNode;
+#ifdef __DEBUG__
+		printf("DEBUG: pPre->name : '%s'\n, pLoc->name : '%s'\n",pPre->name, pLoc->name);
+#endif
+	}
+
+	if (pLoc == NULL)
 	{
 		printf("'%s' is not in the list.\n", searchName);
 		return;
 	}
 
-	while (temp)
+
+	if ((pLoc->leftNode == NULL) && (pLoc->rightNode == NULL))
 	{
-		if (!strcmp(temp->name, searchName))
+
+#ifdef __DEBUG__
+		puts("DEBUG: pLoc is a single node.");
+#endif
+		if (pPre != NULL)
 		{
-			if (pPre)
+			if (pPre->leftNode == pLoc)
 			{
-				pPre->NextAddress = temp->NextAddress;
+				pPre->leftNode = NULL;
 			}
 			else
 			{
-				FirstAddress = temp->NextAddress;
+				pPre->rightNode = NULL;
 			}
-			free(temp);
-			puts("Phone number is deleted.");
-			break;
 		}
-		pPre = temp;
-		temp = temp->NextAddress;
+		else
+		{
+			gRoot = NULL;
+		}
+		puts("Phone number is deleted.");
+		free(pLoc);
 	}
-
-	if (!temp)
+	else if ((pLoc->leftNode == NULL) || (pLoc->rightNode == NULL))
 	{
-		printf("'%s' is not in the list.\n", searchName);
-		return;
-	}
-
-}//should change this
+#ifdef __DEBUG__
+		puts("DEBUG: pLoc has only one child.");
 #endif
+		child = (pLoc->leftNode != NULL) ? pLoc->leftNode : pLoc->rightNode;
+#ifdef __DEBUG__
+		printf("DEBUG: child is : '%s'\n",child);
+#endif
+		if (pPre != NULL)
+		{
+			if (pPre->leftNode == pLoc)
+			{
+#ifdef __DEBUG__
+				printf("DEBUG: now pPre->leftNode is '%s'\n", child);
+#endif
+
+				pPre->leftNode = child;
+
+			}
+			else
+			{
+#ifdef __DEBUG__
+				printf("DEBUG: now pPre->rightNode is '%s'\n", child);
+#endif
+				pPre->rightNode = child;
+			}
+		}
+		else
+		{
+#ifdef __DEBUG__
+			printf("DEBUG: now gRoot is '%s'\n", child);
+#endif
+			gRoot = child;
+		}
+#ifdef __DEBUG__
+		printf("DEBUG: free('%s')\n", pLoc->name);
+#endif
+		puts("Phone number is deleted.");
+		free(pLoc);
+	}
+	else
+	{
+#ifdef __DEBUG__
+		puts("DEBUG: pLoc has two child.");
+#endif
+		pPre2 = pLoc;
+		pLoc2 = pLoc->rightNode;
+#ifdef __DEBUG__
+		puts("DEBUG: searcing minum node of pLoc's tree.");
+#endif
+		while (pLoc2->leftNode != NULL)
+		{
+			pPre2 = pLoc2;
+			pLoc2 = pLoc2->leftNode;
+		}
+		if (pPre2->leftNode == pLoc2)
+		{
+			pPre2->leftNode = pLoc2->rightNode;
+		}
+		else
+		{
+			pPre2->rightNode = pLoc2->rightNode;
+		}
+
+		strcpy(pLoc->name, pLoc2->name);
+		strcpy(pLoc->phoneNum, pLoc2->phoneNum);
+		puts("Phone number is deleted.");
+		free(pLoc2);
+
+	}
+	
+}
+
 void ShowPhoneInfo(phoneData* phone)
 {
 	puts("---------------------------");
@@ -458,6 +553,7 @@ void LevelOrder(phoneData* root)
 {
 	front = 0;
 	rear = 0;
+
 	if (!root)
 	{
 #ifdef __DEBUG__
@@ -484,6 +580,7 @@ void LevelOrder(phoneData* root)
 			puts("DEBUG: showing root's name");
 #endif
 			ShowPhoneInfo(root);
+
 			if (root->leftNode)
 			{
 				enqueue(root->leftNode);
@@ -535,4 +632,15 @@ phoneData* dequeue(void)
 {
 	front = (front + 1) % MAX_QUEUE_SIZE;
 	return queue[front];
+}
+
+void ClearQueue(void)
+{
+	int i;
+	for (i = 0; i < MAX_QUEUE_SIZE; i++)
+	{
+		queue[i] = NULL;
+	}
+
+	return;
 }
